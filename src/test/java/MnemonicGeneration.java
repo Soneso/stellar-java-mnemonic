@@ -8,8 +8,8 @@ public class MnemonicGeneration {
     @Test
     public void test12WordMnemonicGeneration() throws WalletException {
 
-        String mnemonic = Wallet.generate12WordMnemonic();
-        String[] words = mnemonic.split(" ");
+        char[] mnemonic = Wallet.generate12WordMnemonic();
+        String[] words = String.valueOf(mnemonic).split(" ");
 
         Assert.assertEquals(12, words.length);
     }
@@ -17,8 +17,8 @@ public class MnemonicGeneration {
     @Test
     public void test24WordMnemonicGeneration() throws WalletException {
 
-        String mnemonic = Wallet.generate24WordMnemonic();
-        String[] words = mnemonic.split(" ");
+        char[] mnemonic = Wallet.generate24WordMnemonic();
+        String[] words = String.valueOf(mnemonic).split(" ");
 
         Assert.assertEquals(24, words.length);
     }

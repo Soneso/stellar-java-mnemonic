@@ -1,5 +1,6 @@
 package com.soneso.stellarmnemonics.mnemonic;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,7 +18,11 @@ public enum WordList {
         this.words = words;
     }
 
-    public List<String> getWords() {
-        return words;
+    public List<char[]> getWordsAsCharArray() {
+        List<char[]> wordList = new ArrayList<char[]>(words.size());
+        for (String word : words) {
+            wordList.add(word.toCharArray());
+        }
+        return wordList;
     }
 }

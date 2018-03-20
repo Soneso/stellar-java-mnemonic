@@ -1,8 +1,7 @@
+import com.soneso.stellarmnemonics.Wallet;
 import com.soneso.stellarmnemonics.WalletException;
 import com.soneso.stellarmnemonics.derivation.Ed25519Derivation;
-import com.soneso.stellarmnemonics.Wallet;
 import com.soneso.stellarmnemonics.mnemonic.Mnemonic;
-import com.soneso.stellarmnemonics.mnemonic.MnemonicException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.stellar.sdk.KeyPair;
@@ -14,7 +13,7 @@ public class MnemonicKeyPairGeneration {
     @Test
     public void test12WordBIPAndMasterKeyGeneration() throws WalletException {
 
-        String mnemonic = "illness spike retreat truth genius clock brain pass fit cave bargain toe";
+        char[] mnemonic = "illness spike retreat truth genius clock brain pass fit cave bargain toe".toCharArray();
         byte[] bip39Seed = Mnemonic.createSeed(mnemonic, null);
 
         String bip39SeedAsHexString = DatatypeConverter.printHexBinary(bip39Seed).toLowerCase();
@@ -48,7 +47,7 @@ public class MnemonicKeyPairGeneration {
 
     @Test
     public void test24WordBIPAndMasterKeyGeneration() throws WalletException {
-        String mnemonic = "bench hurt jump file august wise shallow faculty impulse spring exact slush thunder author capable act festival slice deposit sauce coconut afford frown better";
+        char[] mnemonic = "bench hurt jump file august wise shallow faculty impulse spring exact slush thunder author capable act festival slice deposit sauce coconut afford frown better".toCharArray();
         byte[] bip39Seed = Mnemonic.createSeed(mnemonic, null);
 
         String bip39SeedAsHexString = DatatypeConverter.printHexBinary(bip39Seed).toLowerCase();
@@ -83,7 +82,7 @@ public class MnemonicKeyPairGeneration {
 
     @Test
     public void test12WordWalletKeyPairGeneration() throws WalletException {
-        String mnemonic = "illness spike retreat truth genius clock brain pass fit cave bargain toe";
+        char[] mnemonic = "illness spike retreat truth genius clock brain pass fit cave bargain toe".toCharArray();
 
         KeyPair keyPair0 = Wallet.createKeyPair(mnemonic, null, 0);
 
@@ -108,7 +107,7 @@ public class MnemonicKeyPairGeneration {
 
     @Test
     public void test24WordWalletKeyPairGeneration() throws WalletException {
-        String mnemonic = "bench hurt jump file august wise shallow faculty impulse spring exact slush thunder author capable act festival slice deposit sauce coconut afford frown better";
+        char[] mnemonic = "bench hurt jump file august wise shallow faculty impulse spring exact slush thunder author capable act festival slice deposit sauce coconut afford frown better".toCharArray();
 
         KeyPair keyPair0 = Wallet.createKeyPair(mnemonic, null, 0);
 
@@ -133,24 +132,25 @@ public class MnemonicKeyPairGeneration {
 
     @Test
     public void test24WordWalletKeyPairGenerationWithPassphrase() throws WalletException {
-        String mnemonic = "cable spray genius state float twenty onion head street palace net private method loan turn phrase state blanket interest dry amazing dress blast tube";
+        char[] mnemonic = "cable spray genius state float twenty onion head street palace net private method loan turn phrase state blanket interest dry amazing dress blast tube".toCharArray();
+        char[] passphrase = "p4ssphr4se".toCharArray();
 
-        KeyPair keyPair0 = Wallet.createKeyPair(mnemonic, "p4ssphr4se", 0);
+        KeyPair keyPair0 = Wallet.createKeyPair(mnemonic, passphrase, 0);
 
         Assert.assertEquals("GDAHPZ2NSYIIHZXM56Y36SBVTV5QKFIZGYMMBHOU53ETUSWTP62B63EQ", keyPair0.getAccountId());
         Assert.assertEquals("SAFWTGXVS7ELMNCXELFWCFZOPMHUZ5LXNBGUVRCY3FHLFPXK4QPXYP2X", new String(keyPair0.getSecretSeed()));
 
-        KeyPair keyPair2 = Wallet.createKeyPair(mnemonic, "p4ssphr4se", 2);
+        KeyPair keyPair2 = Wallet.createKeyPair(mnemonic, passphrase, 2);
 
         Assert.assertEquals("GCLAQF5H5LGJ2A6ACOMNEHSWYDJ3VKVBUBHDWFGRBEPAVZ56L4D7JJID", keyPair2.getAccountId());
         Assert.assertEquals("SAF2LXRW6FOSVQNC4HHIIDURZL4SCGCG7UEGG23ZQG6Q2DKIGMPZV6BZ", new String(keyPair2.getSecretSeed()));
 
-        KeyPair keyPair4 = Wallet.createKeyPair(mnemonic, "p4ssphr4se", 4);
+        KeyPair keyPair4 = Wallet.createKeyPair(mnemonic, passphrase, 4);
 
         Assert.assertEquals("GA6NHA4KPH5LFYD6LZH35SIX3DU5CWU3GX6GCKPJPPTQCCQPP627E3CB", keyPair4.getAccountId());
         Assert.assertEquals("SA5TRXTO7BG2Z6QTQT3O2LC7A7DLZZ2RBTGUNCTG346PLVSSHXPNDVNT", new String(keyPair4.getSecretSeed()));
 
-        KeyPair keyPair8 = Wallet.createKeyPair(mnemonic, "p4ssphr4se", 8);
+        KeyPair keyPair8 = Wallet.createKeyPair(mnemonic, passphrase, 8);
 
         Assert.assertEquals("GDS5I7L7LWFUVSYVAOHXJET2565MGGHJ4VHGVJXIKVKNO5D4JWXIZ3XU", keyPair8.getAccountId());
         Assert.assertEquals("SAIZA26BUP55TDCJ4U7I2MSQEAJDPDSZSBKBPWQTD5OQZQSJAGNN2IQB", new String(keyPair8.getSecretSeed()));

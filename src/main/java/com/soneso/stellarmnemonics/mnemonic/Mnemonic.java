@@ -1,13 +1,12 @@
 package com.soneso.stellarmnemonics.mnemonic;
 
-import com.soneso.stellarmnemonics.derivation.ByteUtils;
+import com.soneso.stellarmnemonics.util.PrimitiveUtil;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
-import java.text.Normalizer;
 import java.util.List;
 
 /**
@@ -17,13 +16,13 @@ import java.util.List;
 
 public class Mnemonic {
 
-    public static String create(Strength strength, WordList wordList) throws MnemonicException {
+    public static char[] create(Strength strength, WordList wordList) throws MnemonicException {
         int byteCount = strength.getRawValue() / 8;
         byte[] bytes = SecureRandom.getSeed(byteCount);
         return create(bytes, wordList);
     }
 
-    private static String create(byte[] entropy, WordList wordList) throws MnemonicException {
+    private static char[] create(byte[] entropy, WordList wordList) throws MnemonicException {
 
         byte[] hashBits;
         try {
@@ -33,44 +32,39 @@ public class Mnemonic {
             throw new MnemonicException("Fatal error! SHA-256 algorithm does not exist!");
         }
 
-        String checkSum = ByteUtils.bytesToBinaryString(hashBits).substring(0, entropy.length * 8 / 32);
-        String entropyBits = ByteUtils.bytesToBinaryString(entropy);
-        String concatenatedBits = String.format("%s%s", entropyBits, checkSum);
 
-        List<String> words = wordList.getWords();
+        char[] binaryHash = PrimitiveUtil.bytesToBinaryAsChars(hashBits);
+        char[] checkSum = PrimitiveUtil.charSubArray(binaryHash, 0, entropy.length * 8 / 32);
+        char[] entropyBits = PrimitiveUtil.bytesToBinaryAsChars(entropy);
+        StringBuilder concatenatedBits = new StringBuilder().append(entropyBits).append(checkSum);
+
+        List<char[]> words = wordList.getWordsAsCharArray();
         StringBuilder mnemonicBuilder = new StringBuilder();
         for (int index = 0; index < concatenatedBits.length() / 11; ++index) {
+
             int startIndex = index * 11;
             int endIndex = startIndex + 11;
-            int wordIndex = Integer.parseInt(concatenatedBits.substring(startIndex, endIndex), 2);
+            char[] wordIndexAsChars = new char[endIndex - startIndex];
+            concatenatedBits.getChars(startIndex, endIndex, wordIndexAsChars, 0);
+            int wordIndex = PrimitiveUtil.binaryCharsToInt(wordIndexAsChars);
             mnemonicBuilder.append(words.get(wordIndex)).append(' ');
         }
-        mnemonicBuilder.deleteCharAt(mnemonicBuilder.length() - 1);
 
-        return mnemonicBuilder.toString();
+        char[] mnemonic = new char[mnemonicBuilder.length() - 1];
+        mnemonicBuilder.getChars(0, mnemonicBuilder.length() - 1, mnemonic, 0);
+        return mnemonic;
     }
 
-    public static byte[] createSeed(String mnemonic, String passphrase) throws MnemonicException {
+    public static byte[] createSeed(char[] mnemonic, char[] passphrase) throws MnemonicException {
 
-        char[] password;
-        try {
-            password = Normalizer.normalize(mnemonic, Normalizer.Form.NFKD).toCharArray();
-        } catch (Exception e) {
-            throw new MnemonicException("Fatal error at mnemonic normalization!");
+        char[] saltChars = new char[]{'m', 'n', 'e', 'm', 'o', 'n', 'i', 'c'};
+        if (passphrase != null) {
+            saltChars = PrimitiveUtil.concatCharArrays(saltChars, passphrase);
         }
-
-        byte[] salt;
-        if (passphrase == null) {
-            passphrase = "";
-        }
-        try {
-            salt = Normalizer.normalize(new StringBuilder("mnemonic").append(passphrase), Normalizer.Form.NFKD).getBytes("UTF-8");
-        } catch (Exception e) {
-            throw new MnemonicException("Fatal error at passphrase normalization!");
-        }
+        byte[] salt = PrimitiveUtil.toBytes(saltChars);
 
         try {
-            KeySpec ks = new PBEKeySpec(password, salt, 2048, 512);
+            KeySpec ks = new PBEKeySpec(mnemonic, salt, 2048, 512);
             SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
             return skf.generateSecret(ks).getEncoded();
         } catch (Exception e) {

@@ -1,5 +1,7 @@
 package com.soneso.stellarmnemonics.derivation;
 
+import com.soneso.stellarmnemonics.util.PrimitiveUtil;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -15,18 +17,18 @@ public class Ed25519Derivation {
     private byte[] chainCode;
 
     public static Ed25519Derivation fromSecretSeed(byte[] seed) throws Ed25519DerivationException {
-        byte[] output;
-        try {
-            output = hMacSha512(seed, "ed25519 seed".getBytes("UTF-8"));
-        } catch (Exception e) {
-            throw new Ed25519DerivationException("Fatal error when trying to get bytes from chain code.");
-        }
-        byte[] privateKey = ByteUtils.byteSubArray(output, 0, 32);
-        byte[] chainCode = ByteUtils.byteSubArray(output, 32, 64);
+
+        char[] key = new char[]{'e', 'd', '2', '5', '5', '1', '9', ' ', 's', 'e', 'e', 'd'};
+        byte[] output = hMacSha512(seed, PrimitiveUtil.toBytes(key));
+
+        byte[] privateKey = PrimitiveUtil.byteSubArray(output, 0, 32);
+        byte[] chainCode = PrimitiveUtil.byteSubArray(output, 32, 64);
+
         return new Ed25519Derivation(privateKey, chainCode);
     }
 
     private static byte[] hMacSha512(byte[] data, byte[] key) throws Ed25519DerivationException {
+
         try {
             SecretKeySpec secretKeySpec = new SecretKeySpec(key, HMAC_SHA512);
             Mac mac = Mac.getInstance(HMAC_SHA512);
@@ -38,6 +40,7 @@ public class Ed25519Derivation {
     }
 
     private Ed25519Derivation(byte[] privateKey, byte[] chainCode) {
+
         this.privateKey = privateKey;
         this.chainCode = chainCode;
     }
@@ -47,17 +50,19 @@ public class Ed25519Derivation {
     }
 
     public Ed25519Derivation derived(int index) throws Ed25519DerivationException {
+
         long edge = 0x80000000L;
         if ((edge & index) != 0) {
             throw new RuntimeException("Invalid index!");
         }
 
-        byte[] data = ByteUtils.concatByteArrays(new byte[]{0}, privateKey);
+        byte[] data = PrimitiveUtil.concatByteArrays(new byte[]{0}, privateKey);
         long derivingIndex = edge + index;
-        data = ByteUtils.concatByteArrays(data, ByteUtils.last4BytesFromLong(derivingIndex));
+        data = PrimitiveUtil.concatByteArrays(data, PrimitiveUtil.last4BytesFromLong(derivingIndex));
 
         byte[] digest = hMacSha512(data, chainCode);
-        byte[] factor = ByteUtils.byteSubArray(digest, 0, 32);
-        return new Ed25519Derivation(factor, ByteUtils.byteSubArray(digest, 32, 64));
+        byte[] factor = PrimitiveUtil.byteSubArray(digest, 0, 32);
+
+        return new Ed25519Derivation(factor, PrimitiveUtil.byteSubArray(digest, 32, 64));
     }
 }

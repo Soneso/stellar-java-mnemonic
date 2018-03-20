@@ -15,15 +15,15 @@ import javax.annotation.Nullable;
 
 public class Wallet {
 
-    public static String generate12WordMnemonic() throws WalletException {
+    public static char[] generate12WordMnemonic() throws WalletException {
         return Mnemonic.create(Strength.NORMAL, WordList.ENGLISH);
     }
 
-    public static String generate24WordMnemonic() throws WalletException {
+    public static char[] generate24WordMnemonic() throws WalletException {
         return Mnemonic.create(Strength.HIGH, WordList.ENGLISH);
     }
 
-    public static KeyPair createKeyPair(String mnemonic, @Nullable String passphrase, int index) throws WalletException {
+    public static KeyPair createKeyPair(char[] mnemonic, @Nullable char[] passphrase, int index) throws WalletException {
         byte[] bip39Seed = Mnemonic.createSeed(mnemonic, passphrase);
 
         Ed25519Derivation masterPrivateKey = Ed25519Derivation.fromSecretSeed(bip39Seed);
