@@ -1,4 +1,4 @@
-# stellar-java--mnemonic
+# stellar-java-mnemonic
 
 The Soneso open source Java library to create mnemonics for the Stellar Network. 
 
