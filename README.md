@@ -16,7 +16,7 @@ Copy and attach source code to your project.
 
 ## Dependencies
 
-The library needs the [Stellar Java SDK] (https://github.com/stellar/java-stellar-sdk)
+The library needs the [Stellar Java SDK](https://github.com/stellar/java-stellar-sdk)
 
 ## Quick Start
 
