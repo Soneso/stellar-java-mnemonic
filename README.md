@@ -68,4 +68,4 @@ Please also see [test classes](https://github.com/Soneso/stellar-java-mnemonic/t
 java-stellar-mnemonic is licensed under an Apache-2.0 license. See the [LICENSE](https://github.com/Soneso/stellar-java-mnemonic/blob/master/LICENSE) file for details.
 
 ## Donations
-Send lumens to: GBD7Z2JSVGD2CWNMULKEROA75E6QXCAIERITPICSV77VMRDXNWIXNGLL
+Send lumens to: GANSYJ64BTHYFM6BAJEWXYLVSZVSHYZFPW4DIQDWJL5BOT6O6GUE7JM5
