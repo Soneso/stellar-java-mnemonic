@@ -18,6 +18,13 @@ Copy and attach source code to your project.
 
 The library needs the [Stellar Java SDK](https://github.com/stellar/java-stellar-sdk)
 
+If you add the library to a project running Java 1.7 or lower, then you need [Bouncy Castle](https://www.bouncycastle.org/latest_releases.html) as well, because some of the security algorithms used within the library are supported starting with Java 1.8 only. After adding that dependency, add the following lines of code at your project entry point.
+```java
+Security.removeProvider("BC");
+Security.insertProviderAt(new BouncyCastleProvider(), 1);
+```
+In that way you are adding Bouncy Castle as the main provider for security algorthms.
+
 ## Quick Start
 
 
